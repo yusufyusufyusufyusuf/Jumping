@@ -88,8 +88,12 @@
             dy: 0,
             gravity: 0.6,
             jumpStrength: -12,
+            doubleJumpStrength: -10,
             speed: 5,
             isJumping: false,
+            onPlatform: false,
+            jumpCount: 0,
+            maxJumps: 2, // Allowing double jump
             collectedCoins: 0
         };
 
@@ -162,6 +166,7 @@
                         player.dy = 0;
                         player.y = platform.y - player.height;
                         player.isJumping = false;
+                        player.jumpCount = 0; // Reset jump count when landing on a platform
                         player.onPlatform = platform;
                     }
                 }
@@ -262,6 +267,7 @@
             player.y = canvas.height - 100;
             player.dy = 0;
             player.isJumping = false;
+            player.jumpCount = 0;
             player.collectedCoins = 0;
             score += 100; // Extra points for reaching the treasure
         }
@@ -274,6 +280,7 @@
             player.y = canvas.height - 100;
             player.dy = 0;
             player.isJumping = false;
+            player.jumpCount = 0;
             player.collectedCoins = 0;
             gameOverScreen.style.display = 'none';
             createGameObjects();
@@ -299,6 +306,7 @@
                 player.y = canvas.height - player.height;
                 player.dy = 0;
                 player.isJumping = false;
+                player.jumpCount = 0;
             }
 
             moveGameObjects();
@@ -308,9 +316,14 @@
 
         // Handle keydown events for movement and jumping
         document.addEventListener('keydown', (e) => {
-            if (e.code === 'Space' && !player.isJumping) {
-                player.dy = player.jumpStrength;
+            if (e.code === 'Space' && player.jumpCount < player.maxJumps) {
+                if (player.jumpCount === 0) {
+                    player.dy = player.jumpStrength; // First jump
+                } else if (player.jumpCount === 1) {
+                    player.dy = player.doubleJumpStrength; // Double jump
+                }
                 player.isJumping = true;
+                player.jumpCount++; // Increment jump count
             }
             if (e.code === 'ArrowRight' || e.code === 'KeyD') {
                 player.dx = player.speed;
@@ -340,3 +353,4 @@
     </script>
 </body>
 </html>
+
